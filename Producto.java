@@ -1,33 +1,29 @@
+// Clase que representa un producto dentro de la línea de producción
 public class Producto {
-    private int id;
-    private String estado;
+    private int id; // Identificador del producto
+    private String estado; // Estado del producto (Nuevo, Rechazado, etc.)
+    public static final String FIN = "FIN"; // Constante que representa el mensaje de finalización
 
-
-    public Producto(int id, String estado){
+    public Producto(int id, String estado) {
         this.id = id;
         this.estado = estado;
-    }   
+    }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public String getEstado(){
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado){
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
-    public void marcarAprobado(){
-
+    // Método para verificar si un producto es el mensaje de finalización
+    public boolean esFin() {
+        return FIN.equals(estado);
     }
-
-    public void marcarRechazado(){
-        
-        
-    }
-
-
 }
+
