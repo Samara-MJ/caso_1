@@ -1,7 +1,7 @@
 import java.util.Random;
 
 // Clase que representa a un operario del equipo de calidad
-public class OperarioCalidad {
+public class OperarioCalidad extends Thread {
     public int id; // Identificador del operario
     public BuzonRevision buzonRevision; // Buzón donde se depositan productos para revisión
     public BuzonReproceso buzonReproceso; // Buzón donde se depositan productos rechazados
