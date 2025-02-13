@@ -1,7 +1,7 @@
 import java.util.Random;
 
 // Clase que representa a un operario del equipo de calidad
-public class OperarioCalidad {
+public class OperarioCalidad implements Runnable {
     public int id; // Identificador del operario
     public BuzonRevision buzonRevision; // Buzón donde se depositan productos para revisión
     public BuzonReproceso buzonReproceso; // Buzón donde se depositan productos rechazados
@@ -12,6 +12,7 @@ public class OperarioCalidad {
     private int productosAprobados = 0; // Contador de productos aprobados
     private Random random = new Random(); // Generador de números aleatorios
     private boolean finGenerado = false;// Saber si se genero el mensaje de FIN
+    private static final int TIEMPO_ESPERA = 100; // Tiempo de espera en milisegundos para espera semiactiva
 
     // Constructor de la clase
     public OperarioCalidad(int id, BuzonRevision buzonRevision, BuzonReproceso buzonReproceso, Deposito deposito, int totalProductos) {
@@ -24,14 +25,24 @@ public class OperarioCalidad {
     }
 
     // Método principal de ejecución del operario
+    @Override
     public void run() {
         try {
             while (true) {
-                Producto producto = buzonRevision.obtenerProducto(); // Obtiene un producto del buzón de revisión
+                Producto producto = null;
+                while (producto == null) {
+                    producto = buzonRevision.obtenerProducto(); // Obtiene un producto del buzón de revisión
+                    if (producto == null) {
+                        Thread.yield(); // Ceder el control del CPU a otros hilos sin bloquear el actual
+                    }
+                }
+                
                 if (producto.esFin()) { // Verifica si el producto es el mensaje de finalización
                     System.out.println("Operario " + id + " recibió mensaje de FIN. Terminando...");
+                    buzonReproceso.agregarProducto(producto); // Asegurar que el mensaje de FIN se propague
                     break; // Termina la ejecución del operario
                 }
+                
                 revisarProducto(producto); // Revisión del producto
                 
                 // Si se alcanzó el número de productos aprobados y no se ha generado el mensaje de fin, generar mensaje "FIN"
