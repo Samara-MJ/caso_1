@@ -46,6 +46,10 @@ public class BuzonRevision {
     public synchronized boolean hayEspacio() {
         return productos.size() < capacidadMaxima;
     }
+    //Metodo para obtener la cantidad de productos
+    public synchronized int tamano() {
+        return productos.size();
+    }
 }
 
 

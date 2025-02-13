@@ -12,6 +12,7 @@ public class Deposito {
     public synchronized void agregarProducto(Producto producto) {
         productos.add(producto);
         System.out.println("Producto " + producto.getId() + " agregado al depósito.");
+        notify();
     }
 
     // Verifica si se ha alcanzado la meta de producción
@@ -21,5 +22,15 @@ public class Deposito {
 
     public int getCantidadActual() {
         return productos.size();
+    }
+
+     // Devuelve el total de productos requeridos
+     public int getTotalNecesario() {
+        return totalNecesario;
+    }
+
+    // Muestra el estado actual del depósito
+    public synchronized void imprimirEstado() {
+        System.out.println("[Depósito] Estado actual: " + productos.size() + "/" + totalNecesario + " productos.");
     }
 }

@@ -11,6 +11,7 @@ public class OperarioCalidad {
     private int productosRechazados = 0; // Contador de productos rechazados
     private int productosAprobados = 0; // Contador de productos aprobados
     private Random random = new Random(); // Generador de números aleatorios
+    private boolean finGenerado = false;// Saber si se genero el mensaje de FIN
 
     // Constructor de la clase
     public OperarioCalidad(int id, BuzonRevision buzonRevision, BuzonReproceso buzonReproceso, Deposito deposito, int totalProductos) {
@@ -33,12 +34,17 @@ public class OperarioCalidad {
                 }
                 revisarProducto(producto); // Revisión del producto
                 
-                // Si se alcanzó el número de productos aprobados, generar mensaje "FIN"
-                if (productosAprobados >= productosAprobar) {
+                // Si se alcanzó el número de productos aprobados y no se ha generado el mensaje de fin, generar mensaje "FIN"
+                if (productosAprobados >= productosAprobar && !finGenerado) {// 
                     Producto finProducto = new Producto(-1,"FIN"); // Crear producto con mensaje de finalización
                     buzonReproceso.agregarProducto(finProducto); // Enviar mensaje de FIN al buzón de reproceso
                     System.out.println("Operario " + id + " envió mensaje de FIN al buzón de reproceso.");
                     break; // Termina la ejecución del operario
+                }
+                // Termona si se gerno el mensaje de FIN y el buzon de reviion esta vacio
+                if (finGenerado && buzonRevision.tamano() == 0) {
+                    System.out.println("Operario " + id + " No hay más productos en el buzón. Terminando ejecución.");
+                    break;
                 }
             }
         } catch (InterruptedException e) {

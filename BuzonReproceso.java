@@ -30,4 +30,8 @@ public class BuzonReproceso {
     public synchronized boolean estaVacio() {
         return productos.isEmpty();
     }
+    // Metodo para obtener el total de productos en el buzon
+    public synchronized int tamano() {
+        return productos.size();
+    }
 }
