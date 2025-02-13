@@ -35,8 +35,9 @@ public class AreaProduccion {
 
         // Iniciar operarios de calidad
         for (OperarioCalidad o : operariosCalidad) {
-            o.start();
+        new Thread(o).start();
         }
+
     }
 
     public static void main(String[] args) {
