@@ -11,7 +11,7 @@ public class OperarioCalidad implements Runnable {
     private int productosRechazados = 0; // Contador de productos rechazados
     private int productosAprobados = 0; // Contador de productos aprobados
     private Random random = new Random(); // Generador de números aleatorios
-    private boolean finGenerado = false;// Saber si se genero el mensaje de FIN
+    private boolean finGenerado = false; // Saber si se generó el mensaje de FIN
     private static final int TIEMPO_ESPERA = 100; // Tiempo de espera en milisegundos para espera semiactiva
 
     // Constructor de la clase
@@ -36,23 +36,26 @@ public class OperarioCalidad implements Runnable {
                         Thread.yield(); // Ceder el control del CPU a otros hilos sin bloquear el actual
                     }
                 }
-                
+
+                System.out.println("Operario " + id + " recibió producto " + producto.getId());
+
                 if (producto.esFin()) { // Verifica si el producto es el mensaje de finalización
                     System.out.println("Operario " + id + " recibió mensaje de FIN. Terminando...");
                     buzonReproceso.agregarProducto(producto); // Asegurar que el mensaje de FIN se propague
                     break; // Termina la ejecución del operario
                 }
-                
+
                 revisarProducto(producto); // Revisión del producto
-                
+
                 // Si se alcanzó el número de productos aprobados y no se ha generado el mensaje de fin, generar mensaje "FIN"
-                if (productosAprobados >= productosAprobar && !finGenerado) {// 
-                    Producto finProducto = new Producto(-1,"FIN"); // Crear producto con mensaje de finalización
+                if (productosAprobados >= productosAprobar && !finGenerado) {
+                    Producto finProducto = new Producto(-1, "FIN"); // Crear producto con mensaje de finalización
                     buzonReproceso.agregarProducto(finProducto); // Enviar mensaje de FIN al buzón de reproceso
                     System.out.println("Operario " + id + " envió mensaje de FIN al buzón de reproceso.");
-                    break; // Termina la ejecución del operario
+                    finGenerado = true; // Marcar que el mensaje de FIN ha sido generado
                 }
-                // Termona si se gerno el mensaje de FIN y el buzon de reviion esta vacio
+
+                // Termina si se generó el mensaje de FIN y el buzón de revisión está vacío
                 if (finGenerado && buzonRevision.tamano() == 0) {
                     System.out.println("Operario " + id + " No hay más productos en el buzón. Terminando ejecución.");
                     break;
@@ -68,17 +71,18 @@ public class OperarioCalidad implements Runnable {
     public void revisarProducto(Producto producto) throws InterruptedException {
         int numeroAleatorio = random.nextInt(100) + 1; // Genera un número entre 1 y 100
         boolean aprobado = !(numeroAleatorio % 7 == 0) || productosRechazados >= maxRechazos; // Verifica si debe aprobarse
-        
+
         if (!aprobado) { // Producto rechazado
             producto.setEstado("Rechazado");
             productosRechazados++;
-            buzonReproceso.agregarProducto(producto); // Enviar al buzón de reproceso
             System.out.println("Operario " + id + " rechazó producto " + producto.getId());
+            buzonReproceso.agregarProducto(producto); // Enviar al buzón de reproceso
         } else { // Producto aprobado
             producto.setEstado("Aprobado");
-            deposito.agregarProducto(producto); // Enviar al depósito final
-            productosAprobados++;
             System.out.println("Operario " + id + " aprobó producto " + producto.getId());
+            deposito.agregarProducto(producto); // Enviar al depósito final
+            System.out.println("Producto " + producto.getId() + " enviado al depósito por Operario " + id);
+            productosAprobados++;
         }
     }
 }
