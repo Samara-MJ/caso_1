@@ -1,4 +1,7 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Productor extends Thread {
+    private static final AtomicInteger contadorProductos = new AtomicInteger(0);
     private int id;
     private BuzonReproceso buzonReproceso;
     private BuzonRevision buzonRevision;
@@ -14,7 +17,7 @@ public class Productor extends Thread {
         try {
             while (continuar) {
                 Producto producto = null;
-                
+
                 // Intentar reprocesar si hay productos en el buzón de reproceso
                 synchronized (buzonReproceso) {
                     if (!buzonReproceso.estaVacio()) {
@@ -27,18 +30,19 @@ public class Productor extends Thread {
                         }
                     }
                 }
-                
+
                 // Si recibió mensaje de FIN, salir del bucle principal
                 if (!continuar) {
                     return;
                 }
-                
-                // Si no hay productos en reproceso, generar uno nuevo
+
+                // Si no hay productos en reproceso, generar uno nuevo con un ID único
                 if (producto == null) {
-                    producto = new Producto(id, "Nuevo");
+                    int nuevoId = contadorProductos.incrementAndGet();
+                    producto = new Producto(nuevoId, "Nuevo");
                     System.out.println("Productor " + id + " generó producto " + producto.getId());
                 }
-                
+
                 // Intentar depositarlo en el buzón de revisión
                 synchronized (buzonRevision) {
                     buzonRevision.agregarProducto(producto);
