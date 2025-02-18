@@ -1,3 +1,4 @@
+//Nombres: Daniela Torres Turriago,
 import java.util.Random;
 public class OperarioCalidad extends Thread { 
     private int id;
