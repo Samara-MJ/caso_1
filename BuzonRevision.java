@@ -3,9 +3,8 @@ import java.util.Queue;
 
 // Clase que representa un buzón de revisión donde los productos esperan para ser evaluados
 public class BuzonRevision {
-    private Queue<Producto> productos; // Cola FIFO que almacena los productos en espera de revisión
+    private static Queue<Producto> productos; // Cola FIFO que almacena los productos en espera de revisión
     private int capacidadMaxima; // Capacidad máxima del buzón de revisión
-    private int productoresEsperando = 0; // Contador de productores esperando espacio
 
     // Constructor que inicializa el buzón con una capacidad máxima
     public BuzonRevision(int capacidadMaxima) {
@@ -16,16 +15,13 @@ public class BuzonRevision {
     // Método sincronizado para agregar un producto al buzón
     public synchronized void agregarProducto(Producto producto) throws InterruptedException {
         while (productos.size() >= capacidadMaxima) { // Si el buzón está lleno, el hilo espera
-            productoresEsperando++; // Indicar que un productor está esperando
+            System.out.println("Productor esperando");
             wait();
-            productoresEsperando--; // Reducir el contador al despertar
         }
-        productos.add(producto); // Agregar el producto a la cola
-        
         // Notificar a los consumidores (operarios de calidad) si hay productos disponibles
-        if (productos.size() == 1) {
-            notifyAll();
-        }
+        productos.add(producto); 
+        System.out.println("Producto " + producto.getId() + " agregado al buzon");
+        notifyAll();
     }
 
     // Método sincronizado para obtener un producto del buzón para su revisión
@@ -34,11 +30,9 @@ public class BuzonRevision {
             wait();
         }
         Producto producto = productos.poll(); // Extraer el primer producto de la cola
-        
+        System.out.println("Producto " + producto.getId() + " obtenido del buzon");
         // Notificar a los productores que pueden agregar más productos si había un límite
-        if (productoresEsperando > 0) {
-            notifyAll();
-        }
+        notifyAll();
         return producto;
     }
 

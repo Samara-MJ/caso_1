@@ -3,7 +3,6 @@ import java.util.ArrayList;
 public class Deposito {
     private ArrayList<Producto> productos = new ArrayList<>();
     private int totalNecesario;
-    private boolean finGenerado = false;
 
     public Deposito(int totalNecesario) {
         this.totalNecesario = totalNecesario;
@@ -16,7 +15,7 @@ public class Deposito {
             System.out.println("Producto " + producto.getId() + " agregado al depósito.");
             
             // Notificar a todos cuando se alcance la meta
-            if (productos.size() >= totalNecesario) {
+            if (haAlcanzadoMeta()) {
                 notifyAll();
             }
         }
@@ -40,5 +39,9 @@ public class Deposito {
     // Muestra el estado actual del depósito
     public synchronized void imprimirEstado() {
         System.out.println("[Depósito] Estado actual: " + productos.size() + "/" + totalNecesario + " productos.");
+    }
+
+    public synchronized int getTamanioProducto() {
+        return productos.size();
     }
 }

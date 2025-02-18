@@ -3,27 +3,27 @@ import java.util.Queue;
 
 // Clase que representa un buzón de reproceso donde se almacenan los productos rechazados
 public class BuzonReproceso {
-    private Queue<Producto> productos = new LinkedList<>(); // Cola FIFO para almacenar los productos
-    private int productoresEsperando = 0; // Contador de productores que están esperando productos
-
+    private static Queue<Producto> productos = new LinkedList<>(); // Cola FIFO para almacenar los productos
+    private static boolean  finEnviado = false;
+    
     // Método sincronizado para agregar un producto al buzón
     public synchronized void agregarProducto(Producto producto) {
         productos.add(producto); // Se agrega el producto a la cola
         
-        // Solo se notifica si hay productores esperando por un producto
-        if (productoresEsperando > 0) {
-            notifyAll(); // Despierta a los productores en espera
-        }
+        // Notificar a todos los productores en espera
+        notifyAll();
     }
 
     // Método sincronizado para obtener un producto del buzón
     public synchronized Producto obtenerProducto() throws InterruptedException {
         while (productos.isEmpty()) { // Mientras no haya productos, el productor espera
-            productoresEsperando++;  // Se incrementa el contador de productores en espera
-            wait(); // El productor entra en espera hasta que haya un producto disponible
-            productoresEsperando--;  // Cuando se despierta, se reduce el contador de espera
+            wait();
         }
-        return productos.poll(); // Se extrae y devuelve el primer producto de la cola
+        Producto producto = productos.poll(); // Se extrae y devuelve el primer producto de la cola
+        
+        // Notificar a los productores que pueden agregar más productos si había un límite
+        notifyAll();
+        return producto;
     }
 
     // Método para verificar si el buzón está vacío
@@ -34,4 +34,13 @@ public class BuzonReproceso {
     public synchronized int tamano() {
         return productos.size();
     }
+
+    public synchronized boolean seEnvioFin() {
+        return finEnviado;
+    }
+
+    public boolean isFinEnviado() {
+        return finEnviado;
+    }
+
 }
