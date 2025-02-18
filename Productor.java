@@ -1,3 +1,5 @@
+//Nombres: Daniela Torres Turriago,
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Productor extends Thread {

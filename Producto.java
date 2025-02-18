@@ -1,3 +1,6 @@
+//Nombres: Daniela Torres Turriago,
+
+
 // Clase que representa un producto dentro de la línea de producción
 public class Producto {
     private int id; // Identificador del producto

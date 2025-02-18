@@ -1,3 +1,4 @@
+//Nombres: Daniela Torres Turriago,
 import java.util.Random;
 
 // Clase que representa a un operario del equipo de calidad
